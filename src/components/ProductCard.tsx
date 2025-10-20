@@ -3,13 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types";
-import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
   const discountPercent = hasDiscount
     ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
@@ -19,7 +23,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
     <Card className="group overflow-hidden transition-all duration-200 hover:shadow-card-hover">
       <CardContent className="p-0">
         {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-muted">
+        <div 
+          className="relative aspect-square overflow-hidden bg-muted cursor-pointer"
+          onClick={() => navigate(`/product/${product.id}`)}
+        >
           <img
             src={product.image}
             alt={product.name}
@@ -38,7 +45,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Content */}
         <div className="p-4 space-y-3">
           {/* Product Name */}
-          <h3 className="font-semibold text-base line-clamp-2 min-h-[3rem]">
+          <h3 
+            className="font-semibold text-base line-clamp-2 min-h-[3rem] cursor-pointer hover:text-primary"
+            onClick={() => navigate(`/product/${product.id}`)}
+          >
             {product.name}
           </h3>
 
@@ -69,13 +79,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
               variant="outline"
               size="sm"
               className="flex-1"
+              onClick={() => addToCart(product)}
             >
               <ShoppingCart className="h-4 w-4 mr-2" />
               Add to Cart
             </Button>
             <Button
               size="sm"
-              className="flex-1 bg-foreground text-background hover:bg-foreground/90"
+              className="flex-1"
+              onClick={() => navigate(`/product/${product.id}`)}
             >
               Buy Now
             </Button>

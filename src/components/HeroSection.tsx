@@ -1,11 +1,23 @@
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Galaxy from "./Galaxy";
 
 const HeroSection = () => {
   return (
-    <section className="relative bg-hero-gradient py-20 md:py-32">
-      <div className="container mx-auto px-4">
+    <section className="relative py-20 md:py-32 overflow-hidden">
+      {/* Galaxy Background */}
+      <div className="absolute inset-0 opacity-30">
+        <Galaxy 
+          density={1.2}
+          glowIntensity={0.6}
+          saturation={0.9}
+          hueShift={217}
+        />
+      </div>
+      
+      {/* Content */}
+      <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight">
             Shop
@@ -22,7 +34,7 @@ const HeroSection = () => {
                 <Input
                   type="search"
                   placeholder="Search on Campus Market"
-                  className="pl-12 h-14 text-lg"
+                  className="pl-12 h-14 text-lg bg-background/80 backdrop-blur"
                 />
               </div>
               <Button size="lg" className="h-14 px-8 text-base font-semibold">
