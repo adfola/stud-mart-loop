@@ -48,6 +48,16 @@ const Header = () => {
             <Link to="/deals" className="text-sm font-medium hover:text-primary transition-colors">
               Deals
             </Link>
+            {user?.role === "seller" && (
+              <>
+                <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+                  Dashboard
+                </Link>
+                <Link to="/messages" className="text-sm font-medium hover:text-primary transition-colors">
+                  Messages
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* Search Bar - Desktop */}
@@ -155,6 +165,16 @@ const Header = () => {
               <Link to="/deals" className="text-sm font-medium hover:text-primary transition-colors py-2">
                 Deals
               </Link>
+              {user?.role === "seller" && (
+                <>
+                  <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors py-2">
+                    Dashboard
+                  </Link>
+                  <Link to="/messages" className="text-sm font-medium hover:text-primary transition-colors py-2">
+                    Messages
+                  </Link>
+                </>
+              )}
               {!user && (
                 <Button onClick={() => navigate("/login")} className="w-full mt-2">
                   Login

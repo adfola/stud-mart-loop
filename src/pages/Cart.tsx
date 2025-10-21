@@ -6,14 +6,15 @@ import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/CartContext";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useState } from "react";
+import { formatNGN } from "@/utils/currency";
 
 export default function Cart() {
   const navigate = useNavigate();
   const { items, updateQuantity, removeFromCart, totalPrice } = useCart();
   const [promoCode, setPromoCode] = useState("");
 
-  const shippingEstimate = 5.99;
-  const taxEstimate = totalPrice * 0.08;
+  const shippingEstimate = 500;
+  const taxEstimate = 0;
   const finalTotal = totalPrice + shippingEstimate + taxEstimate;
 
   if (items.length === 0) {
@@ -55,7 +56,7 @@ export default function Cart() {
                 <div className="flex-1">
                   <h3 className="font-semibold mb-1">{item.name}</h3>
                   <p className="text-sm text-muted-foreground mb-2">
-                    ${item.price.toFixed(2)}
+                    {formatNGN(item.price)}
                   </p>
                   <div className="flex items-center gap-2">
                     <Button
@@ -81,7 +82,7 @@ export default function Cart() {
                 </div>
                 <div className="text-right">
                   <p className="font-bold mb-2">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {formatNGN(item.price * item.quantity)}
                   </p>
                   <Button
                     variant="ghost"
@@ -103,19 +104,15 @@ export default function Cart() {
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">${totalPrice.toFixed(2)}</span>
+                  <span className="font-medium">{formatNGN(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span className="font-medium">${shippingEstimate.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax (8%)</span>
-                  <span className="font-medium">${taxEstimate.toFixed(2)}</span>
+                  <span className="font-medium">{formatNGN(shippingEstimate)}</span>
                 </div>
                 <div className="border-t pt-3 flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">${finalTotal.toFixed(2)}</span>
+                  <span className="text-primary">{formatNGN(finalTotal)}</span>
                 </div>
               </div>
 

@@ -8,10 +8,15 @@ import { Label } from "@/components/ui/label";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "@/hooks/use-toast";
 import { Check } from "lucide-react";
+import { formatNGN } from "@/utils/currency";
+import { useOrders } from "@/contexts/OrderContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
+  const { createOrder } = useOrders();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
@@ -21,6 +26,9 @@ export default function Checkout() {
     campus: "",
     department: "",
   });
+
+  const shippingCost = 500;
+  const total = totalPrice + shippingCost;
 
   if (items.length === 0) {
     navigate("/cart");
@@ -37,15 +45,36 @@ export default function Checkout() {
   };
 
   const handleCompleteOrder = async () => {
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    if (!user) {
+      toast({
+        title: "Please login",
+        description: "You need to be logged in to place an order",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
+
+    // For now, assume first seller - in real app, would group by seller
+    const firstShopId = items[0]?.shopId || "s001";
+    const firstSellerId = "seller1"; // Would get from shop data
+
+    // Create order with proper structure
+    const orderId = createOrder({
+      buyerId: user.id,
+      sellerId: firstSellerId,
+      shopId: firstShopId,
+      items: items,
+      totalAmount: total,
+      status: 'awaiting_payment' as const,
+    });
     
     clearCart();
     toast({
       title: "Order placed successfully!",
-      description: `Order #${Date.now()} has been confirmed.`,
+      description: `Order #${orderId.id} has been created. Please proceed with bank transfer.`,
     });
-    navigate("/");
+    navigate(`/dashboard`);
   };
 
   return (
@@ -164,22 +193,31 @@ export default function Checkout() {
 
             {step === 2 && (
               <div className="bg-card p-6 rounded-lg border space-y-6">
-                <h2 className="text-xl font-bold">Payment Method</h2>
+                <h2 className="text-xl font-bold">Bank Transfer Payment</h2>
                 
-                <div className="space-y-3">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start h-auto py-4"
-                    onClick={handleCompleteOrder}
-                  >
-                    <div className="text-left">
-                      <p className="font-semibold">Mock Payment</p>
-                      <p className="text-sm text-muted-foreground">
-                        Simulate successful payment
-                      </p>
-                    </div>
-                  </Button>
+                <div className="bg-muted p-4 rounded-lg space-y-2">
+                  <p className="font-semibold">Transfer to:</p>
+                  <p className="text-sm">Bank: GTBank</p>
+                  <p className="text-sm">Account Name: Campus Market Escrow</p>
+                  <p className="text-sm font-mono">Account Number: 0123456789</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Amount: {formatNGN(total)}
+                  </p>
                 </div>
+
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    After making the transfer, click the button below to place your order.
+                    The seller will be notified and will confirm your payment.
+                  </p>
+                </div>
+
+                <Button
+                  className="w-full"
+                  onClick={handleCompleteOrder}
+                >
+                  I have made the transfer - Place Order
+                </Button>
 
                 <Button
                   variant="ghost"
@@ -204,7 +242,7 @@ export default function Checkout() {
                       {item.name} x{item.quantity}
                     </span>
                     <span className="font-medium">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatNGN(item.price * item.quantity)}
                     </span>
                   </div>
                 ))}
@@ -213,16 +251,16 @@ export default function Checkout() {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">${totalPrice.toFixed(2)}</span>
+                  <span className="font-medium">{formatNGN(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span className="font-medium">$5.99</span>
+                  <span className="font-medium">{formatNGN(shippingCost)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
                   <span className="text-primary">
-                    ${(totalPrice + 5.99).toFixed(2)}
+                    {formatNGN(total)}
                   </span>
                 </div>
               </div>
