@@ -1,19 +1,17 @@
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Galaxy from "./Galaxy";
+import heroBackground from "@/assets/hero-background.jpg";
 
 const HeroSection = () => {
   return (
     <section className="relative py-20 md:py-32 overflow-hidden">
-      {/* Galaxy Background */}
-      <div className="absolute inset-0 opacity-30">
-        <Galaxy 
-          density={1.2}
-          glowIntensity={0.6}
-          saturation={0.9}
-          hueShift={217}
-        />
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroBackground})` }}
+      >
+        <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
       </div>
       
       {/* Content */}
