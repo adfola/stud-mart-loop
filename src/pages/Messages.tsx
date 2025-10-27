@@ -29,31 +29,36 @@ export default function Messages() {
   const { toast } = useToast();
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    const threadId = searchParams.get('threadId');
     const orderId = searchParams.get('orderId');
-    if (orderId) {
+    
+    if (threadId) {
+      setSelectedThreadId(threadId);
+    } else if (orderId) {
       const threads = getUserThreads();
       const thread = threads.find(t => t.productId);
       if (thread) {
         setSelectedThreadId(thread.id);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, getUserThreads]);
 
   useEffect(() => {
     if (selectedThreadId) {
       markAsRead(selectedThreadId);
       scrollToBottom();
     }
-  }, [selectedThreadId]);
+  }, [selectedThreadId, markAsRead]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
-  if (!isAuthenticated) {
-    navigate("/login");
-    return null;
-  }
 
   const threads = getUserThreads();
   const selectedThread = selectedThreadId ? getThreadById(selectedThreadId) : null;
