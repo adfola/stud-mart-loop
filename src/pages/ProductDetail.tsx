@@ -6,13 +6,19 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { mockApi } from "@/lib/mockApi";
 import { useCart } from "@/contexts/CartContext";
-import { Star, Minus, Plus, ShoppingCart, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useMessages } from "@/contexts/MessageContext";
+import { Star, Minus, Plus, ShoppingCart, Zap, MessageSquare } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatNGN } from "@/utils/currency";
+import { shops } from "@/data/enhancedMockData";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { user, isAuthenticated } = useAuth();
+  const { createThread } = useMessages();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -25,6 +31,19 @@ export default function ProductDetail() {
     queryKey: ["recommendations", id],
     queryFn: () => mockApi.getRecommendations(id),
   });
+
+  const shop = product ? shops.find((s) => s.id === product.shopId) : null;
+
+  const handleContactSeller = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    if (shop) {
+      const thread = createThread(shop.ownerId, product?.id);
+      navigate(`/messages?threadId=${thread.id}`);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -102,11 +121,11 @@ export default function ProductDetail() {
 
               <div className="flex items-baseline gap-3 mb-6">
                 <span className="text-3xl font-bold text-primary">
-                  ${product.price.toFixed(2)}
+                  {formatNGN(product.price)}
                 </span>
                 {product.originalPrice && (
                   <span className="text-lg text-muted-foreground line-through">
-                    ${product.originalPrice.toFixed(2)}
+                    {formatNGN(product.originalPrice)}
                   </span>
                 )}
               </div>
@@ -148,11 +167,26 @@ export default function ProductDetail() {
                 Add to Cart
               </Button>
 
-              <Button variant="secondary">
-                <Zap className="w-4 h-4 mr-2" />
-                Buy Now
+              <Button variant="secondary" onClick={handleContactSeller} className="gap-2">
+                <MessageSquare className="w-4 h-4" />
+                Contact Seller
               </Button>
             </div>
+
+            {/* Shop Info */}
+            {shop && (
+              <div className="pt-6 border-t">
+                <p className="text-sm mb-2">
+                  <span className="font-medium">Sold by:</span>{" "}
+                  <button 
+                    onClick={() => navigate(`/shop/${shop.id}`)}
+                    className="text-primary hover:underline"
+                  >
+                    {shop.name}
+                  </button>
+                </p>
+              </div>
+            )}
 
             {/* Stock Status */}
             <div className="pt-6 border-t">
@@ -185,7 +219,7 @@ export default function ProductDetail() {
                     />
                   </div>
                   <p className="font-medium text-sm truncate">{item.name}</p>
-                  <p className="text-primary font-bold">${item.price}</p>
+                  <p className="text-primary font-bold">{formatNGN(item.price)}</p>
                 </div>
               ))}
             </div>

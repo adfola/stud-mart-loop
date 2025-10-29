@@ -3,6 +3,7 @@ import { createContext, useContext, useState, ReactNode, useEffect } from "react
 interface User {
   id: string;
   name: string;
+  username: string;
   email: string;
   role: "buyer" | "seller";
   avatar?: string;
@@ -18,6 +19,7 @@ interface AuthContextType {
 
 interface RegisterData {
   name: string;
+  username: string;
   email: string;
   password: string;
   role: "buyer" | "seller";
@@ -47,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const mockUser: User = {
       id: "1",
       name: email.split("@")[0],
+      username: email.split("@")[0],
       email,
       role: "buyer",
     };
@@ -60,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const newUser: User = {
       id: Date.now().toString(),
       name: data.name,
+      username: data.username,
       email: data.email,
       role: data.role,
     };

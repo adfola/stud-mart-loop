@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { formatNGN } from "@/utils/currency";
 
 interface ProductCardProps {
   product: Product;
@@ -65,10 +66,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
           {/* Price */}
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold">${product.price}</span>
+            <span className="text-2xl font-bold">{formatNGN(product.price)}</span>
             {hasDiscount && (
               <span className="text-sm text-muted-foreground line-through">
-                ${product.originalPrice}
+                {formatNGN(product.originalPrice!)}
               </span>
             )}
           </div>

@@ -90,11 +90,17 @@ export default function Messages() {
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  const getOtherParticipantName = (thread: any) => {
+  const getOtherParticipant = (thread: any) => {
     const otherUserId = thread.participants.find((p: string) => p !== user!.id);
-    return otherUserId === 'seller1' ? 'Tech Haven' :
-           otherUserId === 'seller2' ? 'Campus Books' :
-           otherUserId === 'buyer1' ? 'Student User' : 'User';
+    // Mock user data lookup
+    const users: Record<string, { name: string; username: string }> = {
+      'seller1': { name: 'Tech Haven', username: 'techhaven' },
+      'seller2': { name: 'Campus Books', username: 'campusbooks' },
+      'seller3': { name: 'Style Hub', username: 'stylehub' },
+      'seller4': { name: 'Fit Life', username: 'fitlife' },
+      'buyer1': { name: 'John Doe', username: 'johndoe' },
+    };
+    return users[otherUserId || ''] || { name: 'User', username: 'user' };
   };
 
   return (
@@ -132,14 +138,19 @@ export default function Messages() {
                       <div className="flex items-start gap-3">
                         <Avatar className="mt-1">
                           <AvatarFallback className="bg-primary/10 text-primary">
-                            {getOtherParticipantName(thread)[0]}
+                            {getOtherParticipant(thread).name[0]}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
-                            <p className="font-medium truncate">
-                              {getOtherParticipantName(thread)}
-                            </p>
+                            <div className="flex flex-col">
+                              <p className="font-medium truncate">
+                                {getOtherParticipant(thread).name}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                @{getOtherParticipant(thread).username}
+                              </p>
+                            </div>
                             {thread.lastMessage && (
                               <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
                                 {formatDistanceToNow(new Date(thread.lastMessage.timestamp), { addSuffix: true })}
@@ -172,14 +183,14 @@ export default function Messages() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
                       <AvatarFallback className="bg-primary text-primary-foreground">
-                        {getOtherParticipantName(selectedThread)[0]}
+                        {getOtherParticipant(selectedThread).name[0]}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <p className="font-semibold text-lg">{getOtherParticipantName(selectedThread)}</p>
+                      <p className="font-semibold text-lg">{getOtherParticipant(selectedThread).name}</p>
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full" />
-                        <p className="text-sm text-muted-foreground">Online</p>
+                        <p className="text-sm text-muted-foreground">@{getOtherParticipant(selectedThread).username}</p>
                       </div>
                     </div>
                   </div>
@@ -279,7 +290,7 @@ export default function Messages() {
                           <div className={`flex gap-2 max-w-[75%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
                             <Avatar className="h-8 w-8 mt-1">
                               <AvatarFallback className={isOwn ? 'bg-primary text-primary-foreground' : 'bg-muted'}>
-                                {isOwn ? user.name[0] : getOtherParticipantName(selectedThread)[0]}
+                                {isOwn ? user.name[0] : getOtherParticipant(selectedThread).name[0]}
                               </AvatarFallback>
                             </Avatar>
                             <div
@@ -289,6 +300,11 @@ export default function Messages() {
                                   : 'bg-muted rounded-tl-sm'
                               }`}
                             >
+                              {!isOwn && (
+                                <p className="text-xs opacity-70 mb-1">
+                                  @{getOtherParticipant(selectedThread).username}
+                                </p>
+                              )}
                               <p className="break-words">{message.content}</p>
                               <div className={`flex items-center gap-1 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
                                 <p className={`text-xs ${isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
