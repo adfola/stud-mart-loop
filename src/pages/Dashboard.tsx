@@ -83,14 +83,19 @@ export default function Dashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:w-auto">
+          <TabsList className="grid w-full grid-cols-4 lg:w-auto">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="orders">
               Orders {pendingOrders.length > 0 && (
                 <Badge variant="destructive" className="ml-2">{pendingOrders.length}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="products" onClick={() => navigate("/dashboard/products")}>
+              Products
+            </TabsTrigger>
+            <TabsTrigger value="payouts" onClick={() => navigate("/dashboard/payouts")}>
+              Payouts
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -121,7 +126,7 @@ export default function Dashboard() {
                     <div
                       key={order.id}
                       className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                      onClick={() => navigate(`/orders/${order.id}`)}
+                      onClick={() => navigate(`/order/${order.id}`)}
                     >
                       <div className="flex-1">
                         <p className="font-medium">Order #{order.id}</p>
@@ -174,7 +179,7 @@ export default function Dashboard() {
                     <div
                       key={order.id}
                       className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                      onClick={() => navigate(`/orders/${order.id}`)}
+                      onClick={() => navigate(`/order/${order.id}`)}
                     >
                       <div className="flex-1">
                         <p className="font-medium">Order #{order.id}</p>

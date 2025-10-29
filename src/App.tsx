@@ -16,12 +16,18 @@ import Checkout from "./pages/Checkout";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import DashboardProducts from "./pages/DashboardProducts";
+import DashboardOrders from "./pages/DashboardOrders";
+import DashboardPayouts from "./pages/DashboardPayouts";
 import Messages from "./pages/Messages";
 import Categories from "./pages/Categories";
 import Deals from "./pages/Deals";
 import Shop from "./pages/Shop";
 import ShopDetail from "./pages/ShopDetail";
 import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
+import Profile from "./pages/Profile";
+import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,15 +49,21 @@ const App = () => (
                       <Route path="/product/:id" element={<ProductDetail />} />
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/search" element={<Search />} />
                       <Route path="/login" element={<Login />} />
                       <Route path="/register" element={<Register />} />
+                      <Route path="/profile" element={<Profile />} />
                       <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/dashboard/products" element={<DashboardProducts />} />
+                      <Route path="/dashboard/orders" element={<DashboardOrders />} />
+                      <Route path="/dashboard/payouts" element={<DashboardPayouts />} />
                       <Route path="/messages" element={<Messages />} />
                       <Route path="/categories" element={<Categories />} />
                       <Route path="/deals" element={<Deals />} />
                       <Route path="/shop" element={<Shop />} />
                       <Route path="/shop/:id" element={<ShopDetail />} />
                       <Route path="/orders" element={<Orders />} />
+                      <Route path="/order/:orderId" element={<OrderDetail />} />
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>

@@ -66,7 +66,15 @@ const Header = () => {
 
           {/* Search Bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-md mx-6">
-            <div className="relative w-full">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                }
+              }}
+              className="relative w-full"
+            >
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
@@ -75,7 +83,7 @@ const Header = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-            </div>
+            </form>
           </div>
 
           {/* Actions */}
@@ -131,6 +139,10 @@ const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={logout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
@@ -162,7 +174,16 @@ const Header = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden border-t py-4 space-y-4">
-            <div className="relative">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                  setIsMenuOpen(false);
+                }
+              }}
+              className="relative"
+            >
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
@@ -171,7 +192,7 @@ const Header = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-            </div>
+            </form>
             <nav className="flex flex-col space-y-2">
               <Link to="/" className="text-sm font-medium hover:text-primary transition-colors py-2">
                 Home
@@ -192,6 +213,9 @@ const Header = () => {
               )}
               {user && (
                 <>
+                  <Link to="/profile" className="text-sm font-medium hover:text-primary transition-colors py-2">
+                    Profile
+                  </Link>
                   <Link to="/orders" className="text-sm font-medium hover:text-primary transition-colors py-2">
                     Orders
                   </Link>

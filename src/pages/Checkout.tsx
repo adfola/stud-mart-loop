@@ -60,7 +60,7 @@ export default function Checkout() {
     const firstSellerId = "seller1"; // Would get from shop data
 
     // Create order with proper structure
-    const orderId = createOrder({
+    const order = createOrder({
       buyerId: user.id,
       sellerId: firstSellerId,
       shopId: firstShopId,
@@ -72,9 +72,9 @@ export default function Checkout() {
     clearCart();
     toast({
       title: "Order placed successfully!",
-      description: `Order #${orderId.id} has been created. Please proceed with bank transfer.`,
+      description: `Order #${order.id} has been created. Seller has been notified.`,
     });
-    navigate(`/dashboard`);
+    navigate(`/order/${order.id}`);
   };
 
   return (

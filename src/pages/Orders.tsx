@@ -55,7 +55,7 @@ export default function Orders() {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => (
-              <div key={order.id} className="bg-card border rounded-lg p-6">
+              <div key={order.id} className="bg-card border rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/order/${order.id}`)}>
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="font-semibold">Order #{order.id}</h3>
