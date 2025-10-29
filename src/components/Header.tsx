@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, User, Menu, X, Moon, Sun, LogOut } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, X, Moon, Sun, LogOut, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMessages } from "@/contexts/MessageContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +22,9 @@ const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
+  const { getUserThreads } = useMessages();
+  
+  const unreadCount = getUserThreads().reduce((count, thread) => count + thread.unreadCount, 0);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -49,14 +53,14 @@ const Header = () => {
               Deals
             </Link>
             {user?.role === "seller" && (
-              <>
-                <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
-                  Dashboard
-                </Link>
-                <Link to="/messages" className="text-sm font-medium hover:text-primary transition-colors">
-                  Messages
-                </Link>
-              </>
+              <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+                Dashboard
+              </Link>
+            )}
+            {user && (
+              <Link to="/orders" className="text-sm font-medium hover:text-primary transition-colors">
+                Orders
+              </Link>
             )}
           </nav>
 
@@ -102,6 +106,22 @@ const Header = () => {
                 </Badge>
               )}
             </Button>
+            
+            {user && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative"
+                onClick={() => navigate("/messages")}
+              >
+                <MessageSquare className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </Button>
+            )}
             
             {user ? (
               <DropdownMenu>
@@ -166,12 +186,20 @@ const Header = () => {
                 Deals
               </Link>
               {user?.role === "seller" && (
+                <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors py-2">
+                  Dashboard
+                </Link>
+              )}
+              {user && (
                 <>
-                  <Link to="/dashboard" className="text-sm font-medium hover:text-primary transition-colors py-2">
-                    Dashboard
+                  <Link to="/orders" className="text-sm font-medium hover:text-primary transition-colors py-2">
+                    Orders
                   </Link>
-                  <Link to="/messages" className="text-sm font-medium hover:text-primary transition-colors py-2">
+                  <Link to="/messages" className="text-sm font-medium hover:text-primary transition-colors py-2 flex items-center justify-between">
                     Messages
+                    {unreadCount > 0 && (
+                      <Badge className="ml-2">{unreadCount}</Badge>
+                    )}
                   </Link>
                 </>
               )}

@@ -2,15 +2,18 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useOrders } from "@/contexts/OrderContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMessages } from "@/contexts/MessageContext";
 import { formatNGN } from "@/utils/currency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import { MessageSquare } from "lucide-react";
 
 export default function Orders() {
   const { getBuyerOrders } = useOrders();
   const { user } = useAuth();
+  const { getUserThreads } = useMessages();
   const navigate = useNavigate();
 
   if (!user) {
@@ -84,10 +87,30 @@ export default function Orders() {
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t">
-                  <span className="font-semibold">Total</span>
-                  <span className="text-lg font-bold text-primary">
-                    {formatNGN(order.totalAmount)}
-                  </span>
+                  <div className="flex-1">
+                    <span className="font-semibold">Total</span>
+                    <span className="text-lg font-bold text-primary ml-4">
+                      {formatNGN(order.totalAmount)}
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const threads = getUserThreads();
+                      const orderThread = threads.find(t => 
+                        t.productId && order.items.some(item => item.id === t.productId)
+                      );
+                      if (orderThread) {
+                        navigate(`/messages?threadId=${orderThread.id}`);
+                      } else {
+                        navigate(`/messages?orderId=${order.id}`);
+                      }
+                    }}
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Contact Seller
+                  </Button>
                 </div>
 
                 {order.status === 'awaiting_payment' && (
