@@ -92,15 +92,12 @@ export default function Messages() {
 
   const getOtherParticipant = (thread: any) => {
     const otherUserId = thread.participants.find((p: string) => p !== user!.id);
-    // Mock user data lookup
-    const users: Record<string, { name: string; username: string }> = {
-      'seller1': { name: 'Tech Haven', username: 'techhaven' },
-      'seller2': { name: 'Campus Books', username: 'campusbooks' },
-      'seller3': { name: 'Style Hub', username: 'stylehub' },
-      'seller4': { name: 'Fit Life', username: 'fitlife' },
-      'buyer1': { name: 'John Doe', username: 'johndoe' },
-    };
-    return users[otherUserId || ''] || { name: 'User', username: 'user' };
+    // Import from mock users data
+    const { mockUsers } = require('@/data/mockUsers');
+    const otherUser = mockUsers.find((u: any) => u.id === otherUserId);
+    return otherUser 
+      ? { name: otherUser.name, username: otherUser.username }
+      : { name: 'User', username: 'user' };
   };
 
   return (

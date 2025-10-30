@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -60,8 +61,11 @@ export default function DashboardProducts() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">My Products</h1>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold">My Products</h1>
+            <p className="text-muted-foreground mt-1">Manage your product listings</p>
+          </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -147,32 +151,62 @@ export default function DashboardProducts() {
           </Dialog>
         </div>
 
-        <div className="grid gap-4">
-          {myProducts.map((product) => (
-            <Card key={product.id} className="p-4">
-              <div className="flex items-center gap-4">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-20 h-20 object-cover rounded"
-                />
-                <div className="flex-1">
-                  <h3 className="font-bold">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground">{product.category}</p>
-                  <p className="font-bold text-primary mt-1">{formatNGN(product.price)}</p>
+        <Card>
+          <CardHeader>
+            <CardTitle>All Products ({myProducts.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              {myProducts.map((product) => (
+                <div key={product.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="font-bold text-lg">{product.name}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="secondary">{product.category}</Badge>
+                          {product.inStock ? (
+                            <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200">
+                              In Stock ({product.stock})
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-200">
+                              Out of Stock
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-xl text-primary">{formatNGN(product.price)}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {product.rating} ⭐ ({product.reviews} reviews)
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {product.description || "No description available"}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </main>
       <Footer />
     </div>
