@@ -5,7 +5,7 @@ interface User {
   name: string;
   username: string;
   email: string;
-  role: "buyer" | "seller";
+  role: "buyer" | "seller" | "admin";
   avatar?: string;
 }
 
@@ -22,7 +22,7 @@ interface RegisterData {
   username: string;
   email: string;
   password: string;
-  role: "buyer" | "seller";
+  role: "buyer" | "seller" | "admin";
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

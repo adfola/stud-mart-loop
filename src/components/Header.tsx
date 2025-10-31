@@ -8,6 +8,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMessages } from "@/contexts/MessageContext";
+import StyledLoginButton from "@/components/StyledLoginButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -150,14 +151,9 @@ const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate("/login")}
-                className="hidden md:flex"
-              >
-                Login
-              </Button>
+              <div className="hidden md:block">
+                <StyledLoginButton onClick={() => navigate("/login")} />
+              </div>
             )}
             
             <Button

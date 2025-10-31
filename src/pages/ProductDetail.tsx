@@ -12,6 +12,7 @@ import { Star, Minus, Plus, ShoppingCart, Zap, MessageSquare } from "lucide-reac
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNGN } from "@/utils/currency";
 import { shops } from "@/data/enhancedMockData";
+import { toast } from "@/hooks/use-toast";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -43,6 +44,19 @@ export default function ProductDetail() {
       const thread = createThread(shop.ownerId, product?.id);
       navigate(`/messages?threadId=${thread.id}`);
     }
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+    // Add to cart and go straight to checkout
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product);
+    }
+    toast({
+      title: "Added to cart",
+      description: "Proceeding to checkout...",
+    });
+    navigate("/checkout");
   };
 
   if (isLoading) {
@@ -156,22 +170,34 @@ export default function ProductDetail() {
               </div>
 
               <Button
-                className="flex-1"
                 onClick={() => {
                   for (let i = 0; i < quantity; i++) {
                     addToCart(product);
                   }
+                  toast({
+                    title: "Added to cart",
+                    description: `${product.name} (x${quantity}) added successfully`,
+                  });
                 }}
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Add to Cart
               </Button>
 
-              <Button variant="secondary" onClick={handleContactSeller} className="gap-2">
-                <MessageSquare className="w-4 h-4" />
-                Contact Seller
+              <Button onClick={handleBuyNow} className="gap-2">
+                <Zap className="w-4 h-4" />
+                Buy Now
               </Button>
             </div>
+
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={handleContactSeller}
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Chat with Seller
+            </Button>
 
             {/* Shop Info */}
             {shop && (
